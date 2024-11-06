@@ -3,8 +3,7 @@ from Great_Plains_OMIG.Files.FilesSetup import *
 from GlobalConfig.GlobalConfigFile import *
 from GlobalConfig.Entities import *
 
-ControlFileTimeStampLabel = None
-header_written = False
+
 def GenerateGreatPlainsFiles(Entity):
 
     output_directory = os.path.join(os.getcwd(),f'{GreatPlainsDirectory()}\\{getFolderDateStamp()}')
@@ -25,7 +24,7 @@ def GenerateGreatPlainsFiles(Entity):
     fileCreation.close()
 
     file = f'GL_OMIG_{Entity}_{getFileTimeStamp()}.txt'
-    print(file+"\n")
+    print(file)
 
 
     """Directory to Source File"""
@@ -61,27 +60,22 @@ def GenerateGreatPlainsFiles(Entity):
     SumOfCredits = str(round(credit1 + credit2, 2))
 
     """Control File Creation"""
-    global header_written
-    global ControlFileTimeStampLabel
-    if ControlFileTimeStampLabel is None:
-        ControlFileTimeStampLabel = getFileTimeStamp()
 
-    control_file_name = f'CONTROL_OMIG_{ControlFileTimeStampLabel}.csv'
+    control_file_name = f'CONTROL_OMIG_{Entity}_{FileTimeStampLabel}.csv'
 
     control_output_file_path = os.path.join(output_directory, control_file_name)
 
     with open(control_output_file_path, 'a') as controlFileCreation:
-        if not header_written:
-            controlFileCreation.write(getControlFileHeader())
-            header_written = True
-        line = f'{file},{row_count},{SumOfDebits},{SumOfCredits}\n'
+        controlFileCreation.write(getControlFileHeader())
+        line = f'{file},{row_count},{SumOfDebits},{SumOfCredits}'
         controlFileCreation.write(line)
     controlFileCreation.close()
+
+    print(control_file_name+"\n")
 
     time.sleep(1)
 
     if Entity == OMIG[-1]:
-        print(getControlFileMessage())
-        print(f'{control_file_name}\n{output_directory}')
+        print(f'{output_directory}')
         return print(f'{getOMIGSQL()}')
 
